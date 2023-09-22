@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "7000:5000"
+    container_name: nombre del contenedor
+    environment:
+      - MYSQL_HOST=mysql
+    volumes:
+      - media-intranet:/app/src/static/archives
+  mysql:
+    image: mysql:8.0.32
+    restart: always
+    container_name: nombre del contenedor
+    environment:
+      MYSQL_ROOT_PASSWORD: contraseña del root
+      MYSQL_DATABASE: nombre de la base
+      MYSQL_USER: nombre del usuario
+      MYSQL_PASSWORD: cntraseña de la usuario
+    ports:
+      - "33061:3306"
+    volumes:
+      - nombre del volumen:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+  nginx:
+    image: nginx:1.23.4
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+volumes:
+  media-intranet:
+  database-intranet:
+  

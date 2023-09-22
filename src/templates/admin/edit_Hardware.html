@@ -1,0 +1,409 @@
+{% extends '/admin/base_Admin.html' %}
+
+{% block title %} Inventario {% endblock %}
+
+{% block customCSS %}
+<!-- Custom CSS panel admin -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_panel_admin.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="row fondo-reloj sombra text-center" style="margin-right: auto;" data-aos="fade-up">
+    <div class="col col2-center">
+        <form name="form_reloj">
+            <label for="" style="color: white;font-size: 16pt;">La hora es: <i class="fa-solid fa-clock"></i> <input
+                    class="reloj" type="text" name="reloj" style="width: 120px; text-align: center;"
+                    onfocus="window.document.form_reloj.reloj.blur()"></label>
+        </form>
+    </div>
+</div>
+
+<!-- Modal crear Inventario -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #0B5ED7; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Crear nuevo Inventario</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class="needs-validation" action="/add_Inventario" method="POST" novalidate>
+                            <br>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            </div>
+                            <div class="">
+                                <label for="id_Empleados_Hardware" style="margin-bottom: 1.5rem;">Encargado</label>
+                                <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;" name="id_Empleados_Hardware"
+                                    required>
+                                    <option value="" disabled selected>elige...</option>
+                                    {% for empleado in empleados %}
+                                    <option value="{{ empleado.id }}">{{ empleado.nombre_Empleados }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="componente_Hardware" style="margin-bottom: 1.5rem;">Nombre del componente</label>
+                                <input type="text" maxlength="100" class="form-control shadow" name="componente_Hardware"
+                                    placeholder="Componente" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="descripcion_Hardware" style="margin-bottom: 1.5rem;">Descripción</label>
+                                <input type="text" maxlength="500" class="form-control shadow" name="descripcion_Hardware"
+                                    placeholder="Descripción" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="marca_Hardware" style="margin-bottom: 1.5rem;">Marca</label>
+                                <input type="text" maxlength="100" class="form-control shadow" name="marca_Hardware"
+                                    placeholder="Marca" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="modelo_Hardware" style="margin-bottom: 1.5rem;">Modelo</label>
+                                <input type="text" maxlength="100" class="form-control shadow" name="modelo_Hardware"
+                                    placeholder="Modelo" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="serial_Hardware" style="margin-bottom: 1.5rem;">Serial</label>
+                                <input type="text" maxlength="100" class="form-control shadow" name="serial_Hardware"
+                                    placeholder="Serial" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="proveedor_Hardware" style="margin-bottom: 1.5rem;">Proveedor</label>
+                                <input type="text" maxlength="100" class="form-control shadow" name="proveedor_Hardware"
+                                    placeholder="Proveedor" required>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-primary sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Crear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #0B5ED7; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar inventario -->
+<div class="modal fade" id="modal_editar_componente" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #147246; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Editar Inventario</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class=" needs-validation" action="/update_Inventario" method="POST" novalidate>
+                            <br>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <!--ID-->
+                                <input type="hidden" id="edi_id_har" name="id" required>
+                            </div>
+                            <div class="">
+                                <label for="id_Empleados_Hardware" style="margin-bottom: 1.5rem;">Encargado</label>
+                                <select class="form-select form-select-lg mb-3 shadow" id="edi_id_emp_har" style="font-size: 12pt;" name="id_Empleados_Hardware"
+                                    required>
+                                    <option value="" disabled selected>elige...</option>
+                                    {% for empleado in empleados %}
+                                    <option value="{{ empleado.id }}">{{ empleado.nombre_Empleados }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="componente_Hardware" style="margin-bottom: 1.5rem;">Nombre del componente</label>
+                                <input type="text" maxlength="100" class="form-control shadow" id="edi_com_har" name="componente_Hardware"
+                                    placeholder="Componente" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="descripcion_Hardware" style="margin-bottom: 1.5rem;">Descripción</label>
+                                <input type="text" maxlength="500" class="form-control shadow" id="edi_des_har" name="descripcion_Hardware"
+                                    placeholder="Descripción" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="marca_Hardware" style="margin-bottom: 1.5rem;">Marca</label>
+                                <input type="text" maxlength="100" class="form-control shadow" id="edi_mar_har" name="marca_Hardware"
+                                    placeholder="Marca" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="modelo_Hardware" style="margin-bottom: 1.5rem;">Modelo</label>
+                                <input type="text" maxlength="100" class="form-control shadow" id="edi_mod_har" name="modelo_Hardware"
+                                    placeholder="Modelo" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="serial_Hardware" style="margin-bottom: 1.5rem;">Serial</label>
+                                <input type="text" maxlength="100" class="form-control shadow" id="edi_ser_har" name="serial_Hardware"
+                                    placeholder="Serial" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="proveedor_Hardware" style="margin-bottom: 1.5rem;">Proveedor</label>
+                                <input type="text" maxlength="100" class="form-control shadow" id="edi_pro_har" name="proveedor_Hardware"
+                                    placeholder="Proveedor" required>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-success sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #147246; border: 0; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal eliminar Inventario -->
+<div class="modal fade" id="modal_eliminar_componente" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #BB2D3B; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Eliminar Inventario</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class="needs-validation" action="/delete_Inventario" method="POST" novalidate>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <!--ID-->
+                                <input type="hidden" id="eli_id_per" name="id" required>
+                            </div>
+                            <div>
+                                <h4 for="eli_com_har" style="margin-bottom: 1.5rem;">Atención!!! esta apunto de eliminar del inventario el componente:</h4>
+                            </div>
+                            <div class="text-center">
+                                <input class="reloj" type="text" id="eli_com_har"
+                                    style="width: auto; text-align: center; font-size: 20pt; border-bottom:1px solid yellow;"
+                                    disabled>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <img src="{{ url_for('static', filename='img/peligro.png') }}" width="90px" height="90px"
+                                    alt="">
+                            </div>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-danger sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Eliminar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #BB2D3B; border: 0; border: 0;">
+                <button type="button" class="btn btn-success sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Generar Reporte -->
+<div class="modal fade" id="modal_generar_reporte" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #FFCA2C; color: black; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Generar Reporte</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class="needs-validation" action="/reporte_inventario" method="POST" target="_blank" novalidate>
+                            <br>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 1.5rem;">Elija el nombre de un empleado</h4>
+                            </div>
+                            <div class="">
+                                <label for="id_Empleados_Hardware" style="margin-bottom: 1.5rem;">empleado</label>
+                                <select class="form-select form-select-lg mb-3 shadow" id="edi_id_emp_har" style="font-size: 12pt;" name="id_Empleados_Hardware"
+                                    required>
+                                    <option value="" disabled selected>elige...</option>
+                                    <option value="%">Todos</option>
+                                    {% for empleado in empleados %}
+                                    <option value="%{{ empleado.id }}%">{{ empleado.nombre_Empleados }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="id_Empleados_Hardware" style="margin-bottom: 1.5rem;">Elige un formato para el documento</label>
+                                <select class="form-select form-select-lg mb-3 shadow" id="edi_id_emp_har" style="font-size: 12pt;" name="formato"
+                                    required>
+                                    <option value="" disabled selected>elige...</option>
+                                    <option value="vertical">Vertical</option>
+                                    <option value="horizontal">Horizontal</option>
+                                </select>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-warning sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Crear reporte</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #FFCA2C; border: 0; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row text-center" data-aos="fade-up">
+        <div class="col" style="justify-content: center; margin-top: 4rem;">
+            <img class="rounded-circle sombra" style="background-color: #00A3AC;"
+                src="{{ url_for('static', filename='img/inventario.png') }}" width="200px" height="200px" alt="">
+        </div>
+        <div class="row text-center">
+            <div>
+                <h1 style="margin-top: 1rem;">Panel de Inventario</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container" data-aos="fade-up">
+        <hr>
+    </div>
+    <div class="row">
+        <div class="col" style="padding-top: 0rem; font-size: 14pt;" data-aos="fade-up">
+            <div class="row">
+                <div class="col text-center" style="padding-top: 1rem; font-size: 20pt;">
+                    <label style="margin-bottom: 1rem;"><b>Crea un nuevo Inventario <i class="fa-solid fa-arrow-right"></i>
+                            <!-- CREAR + Abre modal crear usuario -->
+                            <button type="button" class="btn btn-lg btn-primary sombra" style="margin-left: 1rem;"
+                                data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                <i class="fa-solid fa-user-plus"></i> Crear
+                            </button></b></label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center" style="padding-top: 1rem; font-size: 20pt;">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <br />
+                    {% for message in messages %}
+                    <div class="alert alert-primary alert-dismissible" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row" style="margin-top: 2rem;" data-aos="fade-up">
+        <div class="col">
+            <div class="card sombra"
+                style="background-color: #212529; color: white; padding-right: 1rem; padding-left: 1rem;">
+                <div class="">
+                    <br>
+                    <h4 style="margin-left: 1rem;">Tabla de inventario</h4>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="btn btn-warning sombra" style="margin-right: 1rem; margin-bottom: 0.5rem;" data-bs-toggle="modal"
+                                data-bs-target="#modal_generar_reporte" data-toggle="tooltip" data-placement="bottom" title="Reporte inventario">
+                                <i class="fa-solid fa-user-plus"></i> Generar reporte
+                            </button>  
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive" style="margin-top: 2rem; margin-bottom: 3rem;">
+                    <table id="tabla_Inventario" class="table table-dark table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col" hidden>Id</th>
+                                <th scope="col" hidden>IdEmp</th>
+                                <th scope="col">Encargado</th>
+                                <th scope="col">Componente</th>
+                                <th scope="col">Descripcion</th>
+                                <th scope="col">Marca</th>
+                                <th scope="col">Modelo</th>
+                                <th scope="col">Serial</th>
+                                <th scope="col">Proveedor</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for componentes in hardware %}
+                            <tr>
+                                <td hidden>{{ componentes.id }}</td>
+                                <td hidden>{{ componentes.id_Empleados_Hardware }}</td>
+                                <td>{{ componentes.nombre_Empleados }}</td>
+                                <td>{{ componentes.componente_Hardware }}</td>
+                                <td>{{ componentes.descripcion_Hardware }}</td>
+                                <td>{{ componentes.marca_Hardware }}</td>
+                                <td>{{ componentes.modelo_Hardware }}</td>
+                                <td>{{ componentes.serial_Hardware }}</td>
+                                <td>{{ componentes.proveedor_Hardware }}</td>
+                                <td>
+                                    <!-- EDITAR -->
+                                    <button type="button" class="btn btn-success sombra" style="margin-right: 1rem; margin-bottom: 0.5rem;" data-bs-toggle="modal"
+                                        data-bs-target="#modal_editar_componente" data-toggle="tooltip" data-placement="bottom" title="Editar" 
+                                        id="btnEditHardware" data-edi_id_har="{{ componentes.id }}" data-edi_id_emp_har="{{ componentes.id_Empleados_Hardware }}" 
+                                        data-edi_des_har="{{ componentes.descripcion_Hardware }}" data-edi_mar_har="{{ componentes.marca_Hardware }}"
+                                        data-edi_mod_har="{{ componentes.modelo_Hardware }}" data-edi_ser_har="{{ componentes.serial_Hardware }}"
+                                        data-edi_pro_har="{{ componentes.proveedor_Hardware }}" data-edi_com_har="{{ componentes.componente_Hardware }}">
+                                        <i class="fa-solid fa-file-pen"></i>
+                                    </button>
+                                    <!-- ELIMINAR -->
+                                    <button type="button" class="btn btn-danger sombra" style="margin-bottom: 0.5rem; margin-right: 1rem;" data-bs-toggle="modal" 
+                                        data-bs-target="#modal_eliminar_componente" data-toggle="tooltip" data-placement="bottom" title="Eliminar" 
+                                        id="btnDeleteHardware" data-eli_id_per="{{ componentes.id }}" data-eli_com_har="{{ componentes.componente_Hardware }}">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bloque para cargar el titulo de diferentes paginas -->
+    <title>Intranet Antilhue | {% block title %}{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link type="image/x-icon" rel="shortcut icon" href="https://cdn1.antilhue.com/web/image/website/1/favicon?unique=bbe6951">
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrapCSS/bootstrap.min.css') }}" crossorigin="anonymous">
+
+    <!--Font Awesome icon -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='FontAwesome/css/all.min.css') }}" crossorigin="anonymous">
+
+    <!-- AOS ANIMATION -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='aos/dist/aos.css') }}" crossorigin="anonymous">
+
+        <!-- Custom CSS -->
+    {% block customCSS %} {% endblock %}
+
+</head>
+
+<body class="text-center">
+    {% block body %} {% endblock %}
+
+    <!-- Bootstrap JS -->
+    <script src="{{ url_for('static', filename='js/bootstrapJS/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+
+    <!-- Custom js-->
+    <script src="{{ url_for('static', filename='js/validacion_inputs.js') }}"></script>
+
+    <!-- AOS ANIMATION -->
+    <script src="{{ url_for('static', filename='aos/dist/aos.js') }}" crossorigin="anonymous"></script>
+
+    <script>
+        AOS.init();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Favicon -->
+    <link type="image/x-icon" rel="shortcut icon" href="https://cdn1.antilhue.com/web/image/website/1/favicon?unique=bbe6951">
+	<title>Antilhue | Reporte Inventario</title>
+	<!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrapCSS/bootstrap.min.css') }}" crossorigin="anonymous">
+	<!--Font Awesome icon -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='FontAwesome/css/all.min.css') }}" crossorigin="anonymous">
+	<style>
+		body{
+			margin: 2rem;
+		}
+		th{
+			max-width: 1.5rem;
+        	word-wrap: break-word;
+			border-right: 2px solid black;
+			text-align: center;
+		}
+		td{
+			max-width: 150px;
+        	word-wrap: break-word;
+		}
+		hr{
+			margin: 2rem;
+		}
+	</style>
+</head>
+<body>
+	<h1>Reporte Inventario</h1>
+	<p>Fecha <span id="fecha-actual"></span></p>
+	<button class="btn btn-outline-primary" id="btnCrearPdf" data-toggle="tooltip" data-placement="bottom" title="Generar PDF" ><i class="fa-solid fa-print"></i></button>
+	{% for reporte in reportes %}
+	<table class="table">
+		<tbody>
+			<tr>
+				<th scope="col">Encargado:</th>
+				<td>{{ reporte.nombre_Empleados }}</td>
+			</tr>
+			<tr>
+				<th scope="col">Componente:</th>
+				<td>{{ reporte.componente_Hardware }}</td>
+			</tr>
+			<tr>
+				<th scope="col">Descripción:</th>
+				<td>{{ reporte.descripcion_Hardware }}</td>
+			</tr>
+			<tr>
+				<th scope="col">Marca:</th>
+				<td>{{ reporte.marca_Hardware }}</td>
+			</tr>
+			<tr>
+				<th scope="col">Modelo:</th>
+				<td>{{ reporte.modelo_Hardware }}</td>
+			</tr>
+			<tr>
+				<th scope="col">Serial:</th>
+				<td>{{ reporte.serial_Hardware }}</td>
+			</tr>
+			<tr>
+				<th scope="col">Proveedor:</th>
+				<td>{{ reporte.proveedor_Hardware }}</td>
+		  	</tr>
+		</tbody>
+	</table>
+	<hr>
+	{% endfor %}
+	<!-- Bootstrap JS -->
+    <script src="{{ url_for('static', filename='js/bootstrapJS/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+	<!-- HTML to PDF -->
+	<script src="{{ url_for('static', filename='js/html2pdf.bundle.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/custom_html2pdf.js') }}"></script>
+	<script>
+		var fecha = new Date();
+		var fechaActual = fecha.getDate() + " de " + fecha.toLocaleString('default', { month: 'long' }) + " de " + fecha.getFullYear();
+		document.getElementById("fecha-actual").textContent = fechaActual;
+	  </script>
+</body>
+</html>

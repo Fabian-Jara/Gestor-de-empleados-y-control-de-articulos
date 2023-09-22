@@ -1,0 +1,415 @@
+{% extends '/admin/base_Admin.html' %}
+
+{% block title %} Usuarios {% endblock %}
+
+{% block customCSS %}
+<!-- Custom CSS panel admin -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_panel_admin.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="row fondo-reloj sombra text-center" style="margin-right: auto;" data-aos="fade-up">
+    <div class="col col2-center">
+        <form name="form_reloj">
+            <label for="" style="color: white;font-size: 16pt;">La hora es: <i class="fa-solid fa-clock"></i> <input
+                    class="reloj" type="text" name="reloj" style="width: 120px; text-align: center;"
+                    onfocus="window.document.form_reloj.reloj.blur()"></label>
+        </form>
+    </div>
+</div>
+
+<!-- Modal crear usuarios-->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #0B5ED7; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Crear nuevo usuario</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class="needs-validation" action="/add_user" method="POST" novalidate>
+                            <div style="display: none;">
+                                <input type="" name="csrf_token" value="{{ csrf_token() }}">
+                            </div>
+                            
+                            <div class="hidden">
+                                <label for="usuario_Usuarios" style="margin-bottom: 1.5rem;">Usuario o
+                                    Correo</label>
+                                <input type="text" maxlength="45" class="form-control shadow" name="usuario_Usuarios"
+                                    placeholder="usuario o correo" required>
+                            </div><br>
+                            <div class="">
+                                <label for="clave_Usuarios" style="margin-bottom: 1.5rem;">Contraseña</label>
+                                <input type="password" maxlength="15" class="form-control shadow" name="clave_Usuarios"
+                                    placeholder="Contraseña" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="nombre_Usuarios" style="margin-bottom: 1.5rem;">Nombre completo</label>
+                                <input type="text" maxlength="45" class="form-control shadow" name="nombre_Usuarios"
+                                    placeholder="Nombre completo" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="id_Rol_Usuarios" style="margin-bottom: 1.5rem;">Rol del
+                                    usuario</label>
+                                <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;" name="id_Rol_Usuarios"
+                                    required>
+                                    <option value="" selected disabled>elige...</option>
+                                    {% for rol in roles %}
+                                    <option value="{{ rol.id }}">{{ rol.nombre_Rol }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="estado_Usuarios" style="margin-bottom: 1.5rem;">Estado del
+                                    usuario</label>
+                                <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;"
+                                    name="estado_Usuarios" required>
+                                    <option value="" selected disabled>elige...</option>
+                                    <option value="1">Activado</option>
+                                    <option value="0">Desactivado</option>
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="fecha_Usuarios" style="margin-bottom: 1.5rem;">Fecha de
+                                    ingreso</label>
+                                <input type="date" class="form-control shadow" name="fecha_Usuarios" required>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-primary sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Crear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #0B5ED7; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar usuarios-->
+<div class="modal fade" id="modal_editar_user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #147246; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Editar usuario</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class=" needs-validation" action="/update_user" method="POST" novalidate>
+                            <br>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <!--ID-->
+                                <input type="hidden" id="edi_id_us" name="id" required>
+                            </div>
+                            <div class="">
+                                <label for="usuario_Usuarios" style="margin-bottom: 1.5rem;">Usuario o
+                                    Correo</label>
+                                <input type="text" maxlength="45" class="form-control shadow" id="edi_us_us" name="usuario_Usuarios"
+                                    placeholder="Usuario o Correo" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="nombre_Usuarios" style="margin-bottom: 1.5rem;">Nombre completo</label>
+                                <input type="text" maxlength="45" class="form-control shadow" id="edi_nom_us" name="nombre_Usuarios"
+                                    placeholder="Nombre completo" required>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="id_Rol_Usuarios" style="margin-bottom: 1.5rem;">Rol del
+                                    usuario</label>
+                                <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;"
+                                    id="edi_id_rol_us" name="id_Rol_Usuarios" required>
+                                    <option value="" selected disabled>elige...</option>
+                                    {% for rol in roles %}
+                                    <option value="{{ rol.id }}">{{ rol.nombre_Rol }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="estado_Usuarios" style="margin-bottom: 1.5rem;">Estado del
+                                    usuario</label>
+                                <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;"
+                                    id="edi_est_us" name="estado_Usuarios" required>
+                                    <option value="" selected disabled>elige...</option>
+                                    <option value="1">Activado</option>
+                                    <option value="0">Desactivado</option>
+                                </select>
+                            </div>
+                            <br>
+                            <div class="">
+                                <label for="fecha_Usuarios" style="margin-bottom: 1.5rem;">Fecha de
+                                    ingreso</label>
+                                <input type="date" class="form-control shadow" id="edi_fech_us" name="fecha_Usuarios" value="" required>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-success sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #147246; border: 0; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal eliminar usuarios-->
+<div class="modal fade" id="modal_eliminar_user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #BB2D3B; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Eliminar usuario</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class="needs-validation" action="/delete_user" method="POST" novalidate>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <!--ID-->
+                                <input type="hidden" id="eli_id_us" name="id" required>
+                            </div>
+                            <div>
+                                <h4 for="eli_nom_us" style="margin-bottom: 1.5rem;">Atención!!! esta apunto de eliminar al
+                                    usuario:</h4>
+                            </div>
+                            <div class="text-center">
+                                <input class="reloj" type="text" id="eli_nom_us"
+                                    style="width: auto; text-align: center; font-size: 20pt; border-bottom:1px solid yellow;"
+                                    disabled>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <img src="{{ url_for('static', filename='img/peligro.png') }}" width="90px" height="90px"
+                                    alt="">
+                            </div>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-danger sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Eliminar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #BB2D3B; border: 0; border: 0;">
+                <button type="button" class="btn btn-success sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar Contraseña-->
+<div class="modal fade" id="modal_clave_user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #FFCA2C; color: black; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Editar Contraseña</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <form class="needs-validation" action="/update_clave" method="POST" novalidate>
+                            <br>
+                            <div style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <!--ID-->
+                                <input type="hidden" id="cla_id_us" name="id" required>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 1.5rem;">Atención!!! Editara la contraseña del usuario:</h4>
+                            </div>
+                            <div class="text-center">
+                                <input class="reloj" type="text" id="cla_nom_us"
+                                    style="width: auto; text-align: center; font-size: 20pt; border-bottom:1px solid yellow;"
+                                    disabled>
+                            </div>
+                            <div class="" style="margin-top: 2rem;">
+                                <label style="margin-bottom: 1.5rem;">Nueva contraseña</label>
+                                <input type="password" maxlength="15" class="form-control shadow" name="new_clave" placeholder="Nueva clave" required>
+                            </div>
+                            <div class="" style="margin-top: 2rem;">
+                                <label style="margin-bottom: 1.5rem;">Confirma contraseña</label>
+                                <input type="password" maxlength="15" class="form-control shadow" name="confirm_clave" placeholder="Confirma clave" required>
+                            </div>
+                            <div class="container">
+                                <hr style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
+                            </div>
+                            <div class="">
+                                <label style="margin-bottom: 1.5rem;">Ingrese su contraseña para autorizar</label>
+                                <input type="password" maxlength="15" class="form-control shadow" name="mi_contraseña" placeholder="Tu contraseña" required>
+                            </div>
+                            <br>
+                            <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                <button class="w-50 btn btn-warning sombra" type="submit"><i
+                                        class="fa-solid fa-floppy-disk"></i> Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #FFCA2C; border: 0; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row text-center" data-aos="fade-up">
+        <div class="col" style="justify-content: center; margin-top: 4rem;">
+            <img class="rounded-circle sombra" src="{{ url_for('static', filename='img/agregar-usuario.png') }}"
+            style="background-color: #00A3AC;" width="200px" height="200px" alt="">
+        </div>
+        <div class="row text-center">
+            <div>
+                <h1 style="margin-top: 1rem;">Panel de Usuarios</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container" data-aos="fade-up">
+        <hr>
+    </div>
+    <div class="row">
+        <div class="col" style="padding-top: 0rem; font-size: 14pt;" data-aos="fade-up">
+            <div class="row">
+                <div class="col text-center" style="padding-top: 1rem; font-size: 20pt;">
+                    <label style="margin-bottom: 1rem;"><b>Crea un nuevo usuario <i class="fa-solid fa-arrow-right"></i>
+                            <!-- CREAR + Abre modal crear usuario -->
+                            <button type="button" class="btn btn-lg btn-primary sombra" style="margin-left: 1rem;"
+                                data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                <i class="fa-solid fa-user-plus"></i> Crear
+                            </button></b></label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center" style="padding-top: 1rem; font-size: 20pt;">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <br />
+                    {% for message in messages %}
+                    <div class="alert alert-primary alert-dismissible" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row" style="margin-top: 2rem;" data-aos="fade-up">
+        <div class="col">
+            <div class="card sombra"
+                style="background-color: #212529; color: white; padding-right: 1rem; padding-left: 1rem;">
+                <div class="">
+                    <br>
+                    <h4 style="margin-left: 1rem;">Tabla de usuarios</h4>
+                    <br>
+                </div>
+                <div class="table-responsive" style="margin-top: 2rem; margin-bottom: 3rem;">
+                    <table id="tablaUser" class="table table-dark table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Usuario</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">idRol</th>
+                                <th scope="col">Rol</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.usuario_Usuarios }}</td>
+                                <td>{{ user.nombre_Usuarios }}</td>
+                                <td>{{ user.id_Rol_Usuarios }}</td>
+                                <td>{{ user.nombre_Rol }}</td>
+                                <td>
+                                    {% if user.estado_Usuarios == 1 %}
+                                    <label for="">Activado</label>
+                                    <div class="form-switch">
+                                        <input class="form-check-input sombra" type="checkbox" role="switch"
+                                            id="flexSwitchCheckCheckedDisabled" checked disabled>
+                                    </div>
+                                    {% endif %}
+                                    {% if user.estado_Usuarios == 0 %}
+                                    <label for="">Desactivado</label>
+                                    <div class="form-switch">
+                                        <input class="form-check-input sombra" type="checkbox" role="switch"
+                                            id="flexSwitchCheckDisabled" disabled>
+                                    </div>
+                                    {% endif %}
+
+                                </td>
+                                <td>{{user.fecha_Usuarios}}</td>
+                                <td>
+                                    <!--EDITAR + abre modal Editar usuario-->
+                                    <button type="button" class="btn btn-success sombra" style="margin-right: 1rem; margin-bottom: 0.5rem;" data-bs-toggle="modal"
+                                        data-bs-target="#modal_editar_user" data-toggle="tooltip" data-placement="bottom" title="Editar" 
+                                        id="btnEditUser" data-edi_id_us="{{ user.id }}" data-edi_us_us="{{ user.usuario_Usuarios }}" 
+                                        data-edi_nom_us="{{ user.nombre_Usuarios }}" data-edi_id_rol_us="{{ user.id_Rol_Usuarios }}" 
+                                        data-edi_est_us="{{ user.estado_Usuarios }}" data-edi_fech_us="{{ user.fecha_Usuarios }}">
+                                        <i class="fa-solid fa-file-pen"></i>
+                                    </button>
+                                    <!--ELIMINAR abre modal eliminar usuario-->
+                                    <button type="button" class="btn btn-danger sombra" style="margin-bottom: 0.5rem; margin-right: 1rem;" data-bs-toggle="modal" 
+                                        data-bs-target="#modal_eliminar_user" data-toggle="tooltip" data-placement="bottom" title="Eliminar" 
+                                        id="btnDeleteUser" data-eli_nom_us="{{ user.usuario_Usuarios }}" data-eli_id_us="{{ user.id }}">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <!--Editar contraseña-->
+                                    <button type="button" class="btn btn-warning sombra" style="margin-bottom: 0.5rem; margin-right: 1rem;" data-bs-toggle="modal" 
+                                        data-bs-target="#modal_clave_user" data-toggle="tooltip" data-placement="bottom" title="Cambiar contraseña" 
+                                        id="btnClaveUser" data-cla_nom_us="{{ user.usuario_Usuarios }}" data-cla_id_us="{{ user.id }}">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

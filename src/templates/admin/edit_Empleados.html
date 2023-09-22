@@ -1,0 +1,351 @@
+{% extends '/admin/base_Admin.html' %}
+
+{% block title %} Empleados {% endblock %}
+
+{% block customCSS %}
+<!-- Custom CSS panel admin -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_panel_admin.css') }}" >
+{% endblock %}
+
+{% block body %}
+<div class="row fondo-reloj sombra text-center" style="margin-right: auto;" data-aos="fade-up">
+    <div class="col col2-center">
+        <form name="form_reloj">
+            <label for="" style="color: white;font-size: 16pt;">La hora es: <i class="fa-solid fa-clock"></i> <input
+                    class="reloj" type="text" name="reloj" style="width: 120px; text-align: center;"
+                    onfocus="window.document.form_reloj.reloj.blur()"></label>
+        </form>
+    </div>
+</div>
+
+<!-- Modal cargar empleado al equipo-->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #0B5ED7; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Cargar nuevo empleado</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="row">
+                    <form class="needs-validation" action="/add_empleados" method="POST" enctype="multipart/form-data" novalidate>
+                        <div style="display: none;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        </div>
+                        <div class="">
+                            <label style="margin-bottom: 1.5rem;">Nombre Empleado</label>
+                            <input type="text" maxlength="45" class="form-control shadow" name="nombre_Empleados"
+                                placeholder="Nombre completo" required>
+                        </div>
+                        <br>
+                        <div class="">
+                            <label style="margin-bottom: 1.5rem;">Imagen de perfil</label>
+                            <input type="file" class="form-control shadow" name="imagen_Empleados" required>
+                        </div>
+                        <br>
+                        <div class="">
+                            <label style="margin-bottom: 1.5rem;">Estado</label>
+                            <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;"
+                                name="estado_Empleados" required>
+                                <option value="" selected disabled>elige...</option>
+                                <option value="1">Activado</option>
+                                <option value="0">Desactivado</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="">
+                            <label style="margin-bottom: 1.5rem;">Fecha de ingreso</label>
+                            <input type="date" class="form-control shadow" name="fecha_Empleados" required>
+                        </div>
+                        <br>
+                        <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                            <button class="w-50 btn btn-primary sombra" type="sombra"><i
+                                    class="fa-solid fa-floppy-disk"></i> Crear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #0B5ED7; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar empleados -->
+<div class="modal fade" id="modal_editar_user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #147246; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Editar empleado</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="row">
+                    <form class="needs-validation" action="/update_empleados" method="POST" novalidate>
+                        <div style="display: none;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <!--ID-->
+                            <input type="hidden" id="id_edi_emp" name="id" required>
+                        </div>
+                        <div class="">
+                            <label style="margin-bottom: 1.5rem;">Nombre Empleado</label>
+                            <input type="text" maxlength="45" class="form-control shadow" name="nombre_Empleados"
+                                placeholder="Nombre completo" id="nom_edi_emp" required>
+                        </div>
+                        <br>
+                        <div class="">
+                            <label for="estado_Empleados" style="margin-bottom: 1.5rem;">Estado</label>
+                            <select class="form-select form-select-lg mb-3 shadow" style="font-size: 12pt;"
+                                id="edi_est_emp" name="estado_Empleados" required>
+                                <option value="" selected disabled>elige...</option>
+                                <option value="1">Activado</option>
+                                <option value="0">Desactivado</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="">
+                            <label for="fecha_Empleados" style="margin-bottom: 1.5rem;">Fecha de
+                                ingreso</label>
+                            <input type="date" class="form-control shadow" name="fecha_Empleados"
+                                id="edi_fech_emp" placeholder="Fecha" required>
+                        </div>
+                        <br>
+                        <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                            <button class="w-50 btn btn-success sombra" type="sombra"><i
+                                    class="fa-solid fa-floppy-disk"></i> Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #147246; border: 0; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal eliminar empleado-->
+<div class="modal fade" id="modal_eliminar_user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #BB2D3B; color: white; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Eliminar empleado del equipo</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="row">
+                    <form class="needs-validation" action="/delete_empleados" method="POST" novalidate>
+                        <div style="display: none;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <!--ID-->
+                            <input type="hidden" id="id_eli_emp" name="id" required>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 1.5rem;">Atención esta apunto de eliminar al
+                                empleado:</h4>
+                        </div>
+                        <div class="text-center">
+                            <input class="reloj" type="text" id="nom_eli_emp"
+                                style="width: auto; text-align: center; font-size: 20pt; border-bottom:1px solid yellow;"
+                                disabled>
+                        </div>
+                        <br>
+                        <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                            <img src="{{ url_for('static', filename='img/peligro.png') }}" width="90px" height="90px"
+                                alt="">
+                        </div>
+                        <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                            <button class="w-50 btn btn-danger sombra" type="sombra"><i
+                                    class="fa-solid fa-floppy-disk"></i> Eliminar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #BB2D3B; border: 0; border: 0;">
+                <button type="button" class="btn btn-success sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal mostrar imagen empleado -->
+<div class="modal fade" id="modal_img" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="background-color: #00A3AC; color: black; justify-content: center; border: 0;">
+                <h4 class="modal-title" id="staticBackdropLabel"><b>Editar imagen de empleado</b></h4>
+            </div>
+            <div class="modal-body fondo-negro">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <form class="needs-validation" action="/update_img_empleados" method="POST" enctype="multipart/form-data" novalidate>
+                                <div style="display: none;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <!--ID-->
+                                    <input type="hidden" id="id_edi_img_emp" name="id" required>
+                                </div>
+                                <br>
+                                <div class="">
+                                    <label for="imagen_Empleados" style="margin-bottom: 1.5rem;">Imagen referencial</label>
+                                    <input type="file" class="form-control shadow" name="imagen_Empleados" required>
+                                </div>
+                                <br>
+                                <div class="text-center" style="margin-bottom: 2rem; margin-top: 2rem;">
+                                    <button class="w-50 btn btn-success sombra" type="sombra"><i
+                                            class="fa-solid fa-floppy-disk"></i> Actualizar</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col text-center">
+                            <img class="img_pagina" id="img_emp" src="" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #00A3AC; border: 0; border: 0;">
+                <button type="button" class="btn btn-danger sombra" data-bs-dismiss="modal" data-toggle="tooltip"
+                    data-placement="bottom" title="Cerrar"><i class="fa-solid fa-x"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row text-center" data-aos="fade-up">
+        <div class="col" style="justify-content: center; margin-top: 4rem;">
+            <img class="rounded-circle sombra" style="background-color: #00A3AC;"
+                src="{{ url_for('static', filename='img/teams.png') }}" width="200px" height="200px" alt="">
+        </div>
+        <div class="row text-center">
+            <div>
+                <h1 style="margin-top: 1rem;">Administrar Empleados</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container" data-aos="fade-up">
+        <hr>
+    </div>
+    <div class="row">
+        <div class="col" style="padding-top: 0rem; font-size: 14pt;" data-aos="fade-up">
+            <div class="row">
+                <div class="col text-center" style="padding-top: 1rem; font-size: 20pt;">
+                    <label style="margin-bottom: 1rem;">
+                        <b>Agregar nuevo empleado al equipo:
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <!-- CREAR + Abre modal crear pagina -->
+                            <button type="button" class="btn btn-lg btn-primary sombra" style="margin-left: 1rem;"
+                                data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                <i class="fa-solid fa-people-group"></i> Crear
+                            </button>
+                        </b>
+                    </label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center" style="padding-top: 1rem; font-size: 20pt;">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <br />
+                    {% for message in messages %}
+                    <div class="alert alert-primary alert-dismissible" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container">
+    <div class="row" style="margin-top: 2rem;" data-aos="fade-up">
+        <div class="col">
+            <div class="card sombra"
+                style="background-color: #212529; color: white; padding-right: 1rem; padding-left: 1rem;">
+                <div class="">
+                    <br>
+                    <h4 style="margin-left: 1rem;">Tabla de equipo empleados</h4>
+                    <br>
+                </div>
+                <div class="table-responsive" style="margin-top: 2rem; margin-bottom: 3rem;">
+                    <table id="tabla_Empleados" class="table table-dark table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Imagen</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for empleado in empleados %}
+                            <tr>
+                                <td>{{ empleado.id }}</td>
+                                <td>{{ empleado.nombre_Empleados }}</td>
+                                <td>
+                                    <button type="button" class="btn sombra" style="background-color: #00A3AC; margin-bottom: 0.5rem;" data-bs-toggle="modal" 
+                                        data-bs-target="#modal_img" data-toggle="tooltip" data-placement="bottom" title="Mostrar imagen" 
+                                        id="btnEditImgEmpleado" data-id_edi_img_emp="{{ empleado.id }}" data-img_emp="{{ empleado.imagen_Empleados }}">
+                                        <i class="fa-solid fa-image"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    {% if empleado.estado_Empleados == 1 %}
+                                    <label for="">Activado</label>
+                                    <div class="form-switch">
+                                        <input class="form-check-input sombra" type="checkbox" role="switch"
+                                            id="flexSwitchCheckCheckedDisabled" checked disabled>
+                                    </div>
+                                    {% endif %}
+                                    {% if empleado.estado_Empleados == 0 %}
+                                    <label for="">Desactivado</label>
+                                    <div class="form-switch">
+                                        <input class="form-check-input sombra" type="checkbox" role="switch"
+                                            id="flexSwitchCheckDisabled" disabled>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ empleado.fecha_Empleados }}</td>
+                                <td>
+                                    <!--EDITAR + abre modal Editar pagina-->
+                                    <button type="button" class="btn btn-success sombra" style="margin-right: 1rem; margin-bottom: 0.5rem;" data-bs-toggle="modal" 
+                                        data-bs-target="#modal_editar_user" data-toggle="tooltip" data-placement="bottom" title="Editar"
+                                        id="btnEditEmpleados" data-id_edi_emp="{{ empleado.id }}" data-nom_edi_emp="{{ empleado.nombre_Empleados }}"
+                                        data-edi_est_emp="{{ empleado.estado_Empleados }}" data-edi_fech_emp="{{ empleado.fecha_Empleados }}">
+                                        <i class="fa-solid fa-file-pen"></i>
+                                    </button>
+                                    <!--ELIMINAR + abre modal eliminar pagina -->
+                                    <button type="button" class="btn btn-danger sombra" style="margin-bottom: 0.5rem;" data-bs-toggle="modal" 
+                                        data-bs-target="#modal_eliminar_user" data-toggle="tooltip" data-placement="bottom" title="Eliminar"
+                                        id="btnDeleteEmpleados" data-id_eli_emp="{{ empleado.id }}" data-nom_eli_emp="{{ empleado.nombre_Empleados }}">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

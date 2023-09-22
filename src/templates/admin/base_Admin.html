@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bloque para cargar el titulo de diferentes paginas -->
+    <title>Intranet Antilhue | {% block title %}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link type="image/x-icon" rel="shortcut icon" href="https://cdn1.antilhue.com/web/image/website/1/favicon?unique=bbe6951">
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrapCSS/bootstrap.min.css') }}" crossorigin="anonymous">
+    
+    <!--Font Awesome icon -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='FontAwesome/css/all.min.css') }}" crossorigin="anonymous">
+
+    <!-- AOS ANIMATION -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='aos/dist/aos.css') }}" crossorigin="anonymous">
+
+    <!-- Data table jquery css-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='DataTables/datatables.min.css') }}" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom_home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modo_noche.css') }}">
+    {% block customCSS %} {% endblock %}
+
+</head>
+
+<body class="" onload="mueveReloj()">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark sombra">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home_Admin') }}">
+                <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home_Admin') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_user') }}">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_paginas') }}">Páginas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_carrusel') }}">Carrusel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_empleados') }}">Empleados</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_noticias') }}">Noticias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_permisos') }}">Permisos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_roles') }}">Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('edit_Hardware') }}">Inventario</a>
+                    </li>
+                </ul>
+
+                <button class="switch noche-mar" id="switch">
+                    <span><i class="fa-solid fa-sun"></i></span>
+                    <span><i class="fa-solid fa-moon"></i></span>
+                </button>
+
+                <a class="btn btn-danger" href="{{ url_for('logout') }}"
+                    style="margin-left: 1rem" data-toggle="tooltip" data-placement="bottom" title="Cerrar sesión">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    {% block body %} {% endblock %}
+
+    <hr class="featurette-divider">
+    </div>
+    <footer class="container">
+        <p class="float-end"><a class="btn btn-primary sombra" style="color: white;" data-toggle="tooltip"
+                data-placement="bottom" title="Ir arriba" href="#"><i class="fa-solid fa-arrow-up"></i></a></p>
+        <p>&copy; 2023-2023 Company, Inc.<br>Fabian Jara - Cesar Maita &middot; <a href="#">Privacidad</a> &middot; <a
+                href="#">Términos</a></p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="{{ url_for('static', filename='js/bootstrapJS/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+
+    <!-- Data table jquery JS-->
+    <script src="{{ url_for('static', filename='DataTables/datatables.min.js') }}" crossorigin="anonymous"></script>
+
+    <!-- AOS ANIMATION -->
+    <script src="{{ url_for('static', filename='aos/dist/aos.js') }}" crossorigin="anonymous"></script>
+
+    <!-- Custom js -->
+    <script src="{{ url_for('static', filename='js/reloj.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modo_noche.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/validacion_inputs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/data_Table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/datos_Modal.js') }}"></script>
+
+    <script>
+        AOS.init();
+    </script>
+
+</body>
+
+</html>

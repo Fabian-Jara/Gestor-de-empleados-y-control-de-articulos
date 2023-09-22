@@ -1,0 +1,36 @@
+.fondo-negro{
+    background-color: rgb(58, 58, 58);
+    color: white;
+}
+
+.dataTables_length{
+    margin-bottom: 2rem;
+}
+
+.dataTables_filter{
+    margin-bottom: 2rem;
+}
+
+.dataTables_info{
+    margin-top: 2rem;
+}
+
+#tablaUser_paginate.dataTables_paginate{
+    margin-top: 2rem;
+}
+
+#tabla_Paginas_paginate.dataTables_paginate{
+    margin-top: 2rem;
+}
+
+#tabla_carrusel_paginate.dataTables_paginate{
+    margin-top: 2rem;
+}
+
+#tabla_Empleados_paginate.dataTables_paginate{
+    margin-top: 2rem;
+}
+
+#tabla_Noticias_paginate.dataTables_paginate{
+    margin-top: 2rem;
+}

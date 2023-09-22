@@ -1,0 +1,45 @@
+{% extends '/auth/base_Login.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_Login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="card mx-auto sombra" style="width: 800px; border-radius: 10%;" data-aos="flip-left">
+    <div class="card-body">
+        <form class="form-signin needs-validation" action="/login" method="POST" novalidate>
+            <img class="mb-4" src="{{ url_for('static', filename='img/logo3.png') }}" alt="" width="250"
+                height="250">
+
+            {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+            <br />
+            {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% endwith %}
+            
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-floating">
+                <input type="text" maxlength="45" class="form-control shadow" name="usuario_Usuarios" placeholder="user" required>
+                <label><i class="fa-solid fa-user"></i> Usuario o Correo</label>
+            </div><br>
+            <div class="form-floating">
+                <input type="password" maxlength="12" class="form-control shadow" name="clave_Usuarios" placeholder="pass" required>
+                <label><i class="fa-solid fa-lock"></i> Contraseña</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary shadow" type="submit"><i class="fa-solid fa-right-to-bracket"></i> Ingresar</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
