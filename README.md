@@ -5,4 +5,4 @@ necesitaras agregar usuarios y contraseñas para las coneccions
 
 ademas de alguna imagen
 
-Desarrollada por Fabian Jara
+Desarrollado por Fabian Jara
